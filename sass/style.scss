@@ -121,10 +121,10 @@ $show_width: $width*4 + $differ*5;
 
 /* 上下左右移动 */
 @mixin transition {
-	-webkit-transition: left .05s;
-	   -moz-transition: left .05s;
-	        transition: left .05s;
+	-webkit-transition: left .05s, top .05s, right .05s, bottom .05s;
+	   -moz-transition: left .05s, top .05s, right .05s, bottom .05s;
+	        transition: left .05s, top .05s, right .05s, bottom .05s;
 }
-.left, .right, .top, .bottom {
+.move {
 	@include transition;
 }

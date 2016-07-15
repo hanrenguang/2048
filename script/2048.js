@@ -26,6 +26,7 @@ var colorInfo = {
 var Elem = [];
 
 /* 状态变量，为true则在运动中，false为静止状态 */
+var status = false;
 
 window.onload = function() {
 	//获取16个盒子
@@ -38,13 +39,47 @@ window.onload = function() {
 	init();
 
 	//新游戏
-	newGame.addEventListener("click", function() {
+	addHandler(newGame, "click", function() {
 		Elem.forEach(function(item) {
 			parent.removeChild(item);
 		});
 		Elem = [];
 		init();
-	}, true);
+	});
+
+	//监听方向键事件
+	addHandler(document, "keydown", function(e) {
+		e = e || window.event;
+		var currKey = e.keyCode || e.which; //left37,up38,right39,down40;
+		var isDirect = true;
+
+		//事件处理
+		if(currKey == 37) { //left
+			moveEvent("left");
+		}
+		else if(currKey == 38) { //up
+			moveEvent("top");
+		}
+		else if(currKey == 39) { //right
+			moveEvent("right");
+		}
+		else if(currKey == 40) { //down
+			moveEvent("bottom");
+		}
+		else {
+			isDirect = false;
+		}
+
+		//阻止默认行为
+		if(isDirect) {
+			if(e.preventDefault) {
+				e.preventDefault();
+			}
+			else if(e.returnValue) {
+				e.returnValue = false;
+			}
+		}
+	});
 };
 
 //初始化
@@ -96,4 +131,35 @@ function createNew(a) {
 	//插入页面中
 	Elem.push(newDiv);
 	parent.appendChild(newDiv);
+}
+
+//添加事件监听
+function addHandler(element, type, handler) {
+	if(element.addEventListener) {
+		element.addEventListener(type, handler, false);
+	}
+	else if(element.attachEvent) {
+		element.attachEvent("on" + type, handler);
+	}
+	else {
+		element["on" + type] = handler;
+	}
+}
+
+//移动动画
+function moveEvent(direct) {
+	//先将元素数组排序
+	Elem.sort(function(value1, value2) {
+		var v1 = parseInt(value1.getAttribute("data-locat"));
+		var v2 = parseInt(value2.getAttribute("data-locat"));
+		if(v1 < v2) {
+			return -1;
+		}
+		else {
+			return 1;
+		}
+	});
+
+	//判断是否有相加
+	
 }

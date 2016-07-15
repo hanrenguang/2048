@@ -172,10 +172,10 @@ html, body {
 }
 
 /* 上下左右移动 */
-.left, .right, .top, .bottom {
-  -webkit-transition: left .05s;
-  -moz-transition: left .05s;
-  transition: left .05s;
+.move {
+  -webkit-transition: left .05s, top .05s, right .05s, bottom .05s;
+  -moz-transition: left .05s, top .05s, right .05s, bottom .05s;
+  transition: left .05s, top .05s, right .05s, bottom .05s;
 }
 
 /*# sourceMappingURL=style.css.map */
