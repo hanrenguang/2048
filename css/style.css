@@ -13,29 +13,40 @@ html, body {
 
 /* 游戏名称及主体 */
 .intro, .container {
-  margin: 20px auto;
-  width: 400px;
+  margin: 15px auto;
+  width: 460px;
   text-align: center;
 }
 
 .intro {
-  font-size: 3rem;
+  font-size: 3.5rem;
   letter-spacing: 2px;
   color: #776e65;
 }
 
 .container {
-  height: 400px;
+  height: 460px;
   background-color: #bbada0;
   position: relative;
   -webkit-border-radius: 5px;
   border-radius: 5px;
 }
 
+.container div {
+  position: absolute;
+  width: 105px;
+  height: 105px;
+  line-height: 105px;
+  font-size: 3.5rem;
+  font-weight: 600;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
 .box {
   background-color: #cdc1b4;
-  width: 90px;
-  height: 90px;
+  width: 105px;
+  height: 105px;
   position: absolute;
   -webkit-border-radius: 5px;
   border-radius: 5px;
@@ -47,83 +58,99 @@ html, body {
 }
 
 .box:nth-child(2) {
-  left: 106px;
+  left: 121px;
   top: 8px;
 }
 
 .box:nth-child(3) {
-  left: 204px;
+  left: 234px;
   top: 8px;
 }
 
 .box:nth-child(4) {
-  left: 302px;
+  left: 347px;
   top: 8px;
 }
 
 .box:nth-child(5) {
   left: 8px;
-  top: 106px;
+  top: 121px;
 }
 
 .box:nth-child(6) {
-  left: 106px;
-  top: 106px;
+  left: 121px;
+  top: 121px;
 }
 
 .box:nth-child(7) {
-  left: 204px;
-  top: 106px;
+  left: 234px;
+  top: 121px;
 }
 
 .box:nth-child(8) {
-  left: 302px;
-  top: 106px;
+  left: 347px;
+  top: 121px;
 }
 
 .box:nth-child(9) {
   left: 8px;
-  top: 204px;
+  top: 234px;
 }
 
 .box:nth-child(10) {
-  left: 106px;
-  top: 204px;
+  left: 121px;
+  top: 234px;
 }
 
 .box:nth-child(11) {
-  left: 204px;
-  top: 204px;
+  left: 234px;
+  top: 234px;
 }
 
 .box:nth-child(12) {
-  left: 302px;
-  top: 204px;
+  left: 347px;
+  top: 234px;
 }
 
 .box:nth-child(13) {
   left: 8px;
-  top: 302px;
+  top: 347px;
 }
 
 .box:nth-child(14) {
-  left: 106px;
-  top: 302px;
+  left: 121px;
+  top: 347px;
 }
 
 .box:nth-child(15) {
-  left: 204px;
-  top: 302px;
+  left: 234px;
+  top: 347px;
 }
 
 .box:nth-child(16) {
-  left: 302px;
-  top: 302px;
+  left: 347px;
+  top: 347px;
 }
 
 /* new game按钮 */
+.show {
+  width: 460px;
+  height: 40px;
+  position: relative;
+  left: 50%;
+  margin-left: -230px;
+}
+
+.show p {
+  position: absolute;
+  left: 20px;
+  line-height: 40px;
+  font-size: 1.5rem;
+}
+
 .new {
-  display: block;
+  position: absolute;
+  right: 0;
   width: 100px;
   height: 40px;
   margin: 0 auto;
@@ -142,6 +169,13 @@ html, body {
   background-color: #ffffff;
   border-color: #ffffff;
   color: #FB812F;
+}
+
+/* 上下左右移动 */
+.left, .right, .top, .bottom {
+  -webkit-transition: left .05s;
+  -moz-transition: left .05s;
+  transition: left .05s;
 }
 
 /*# sourceMappingURL=style.css.map */

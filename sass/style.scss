@@ -16,16 +16,16 @@ html, body {
 }
 
 /* 游戏名称及主体 */
-$width: 90px;
+$width: 105px;
 $differ: 8px;
 
 .intro, .container {
-	margin: 20px auto;
+	margin: 15px auto;
 	width: ($differ + $width) * 4 + $differ;
 	text-align: center;
 }
 .intro {
-	font-size: 3rem;
+	font-size: 3.5rem;
 	letter-spacing: 2px;
 	color: #776e65;
 }
@@ -33,6 +33,15 @@ $differ: 8px;
 	height: ($differ + $width) * 4 + $differ;
 	background-color: #bbada0;
 	position: relative;
+	@include border-radius;
+}
+.container div {
+	position: absolute;
+	width: $width;
+	height: $width;
+	line-height: $width;
+	font-size: 3.5rem;
+	font-weight: 600;
 	@include border-radius;
 }
 .box {
@@ -74,9 +83,24 @@ $differ: 8px;
 /* new game按钮 */
 $white: #ffffff;
 $orange: #FB812F;
+$show_width: $width*4 + $differ*5;
 
+.show {
+	width: $show_width;
+	height: 40px;
+	position: relative;
+	left: 50%;
+	margin-left: -$show_width / 2;
+}
+.show p {
+	position: absolute;
+	left: 20px;
+	line-height: 40px;
+	font-size: 1.5rem;
+}
 .new {
-	display: block;
+	position: absolute;
+	right: 0;
 	width: 100px;
 	height: 40px;
 	margin: 0 auto;
@@ -93,4 +117,14 @@ $orange: #FB812F;
 	background-color: $white;
 	border-color: $white;
 	color: $orange;
+}
+
+/* 上下左右移动 */
+@mixin transition {
+	-webkit-transition: left .05s;
+	   -moz-transition: left .05s;
+	        transition: left .05s;
+}
+.left, .right, .top, .bottom {
+	@include transition;
 }
