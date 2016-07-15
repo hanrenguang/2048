@@ -1,0 +1,96 @@
+@charset "UTF-8";
+* {
+	margin: 0;
+	padding: 0;
+}
+html, body {
+	width: 100%;
+	font-family: "Microsoft Yahei", sans-serif;
+	font-size: 14px;
+	background-color: #e8e8e8;
+}
+
+@mixin border-radius {
+	-webkit-border-radius: 5px;
+			border-radius: 5px;
+}
+
+/* 游戏名称及主体 */
+$width: 90px;
+$differ: 8px;
+
+.intro, .container {
+	margin: 20px auto;
+	width: ($differ + $width) * 4 + $differ;
+	text-align: center;
+}
+.intro {
+	font-size: 3rem;
+	letter-spacing: 2px;
+	color: #776e65;
+}
+.container {
+	height: ($differ + $width) * 4 + $differ;
+	background-color: #bbada0;
+	position: relative;
+	@include border-radius;
+}
+.box {
+	background-color: #cdc1b4;
+	width: $width;
+	height: $width;
+	position: absolute;
+	@include border-radius;
+}
+@for $i from 1 through 4 {
+	.box:nth-child(#{$i}) {
+		$k: $i % 5;
+		left: $differ * $k + $width * ($k - 1);
+		top: $differ;
+	}
+}
+@for $i from 5 through 8 {
+	.box:nth-child(#{$i}) {
+		$k: $i % 9 - 4;
+		left: $differ * $k + $width * ($k - 1);
+		top: $differ * 2 + $width;
+	}
+}
+@for $i from 9 through 12 {
+	.box:nth-child(#{$i}) {
+		$k: $i % 13 - 8;
+		left: $differ * $k + $width * ($k - 1);
+		top: $differ * 3 + $width * 2;
+	}
+}
+@for $i from 13 through 16 {
+	.box:nth-child(#{$i}) {
+		$k: $i % 17 - 12;
+		left: $differ * $k + $width * ($k - 1);
+		top: $differ * 4 + $width * 3;
+	}
+}
+
+/* new game按钮 */
+$white: #ffffff;
+$orange: #FB812F;
+
+.new {
+	display: block;
+	width: 100px;
+	height: 40px;
+	margin: 0 auto;
+	font-size: 16px;
+	background-color: $orange;
+	outline: none;
+	border: 1px solid $orange;
+	cursor: pointer;
+	color: $white;
+	@include border-radius;
+	transition: all .5s;
+}
+.new:hover {
+	background-color: $white;
+	border-color: $white;
+	color: $orange;
+}

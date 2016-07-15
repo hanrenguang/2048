@@ -1,0 +1,147 @@
+@charset "UTF-8";
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  font-family: "Microsoft Yahei", sans-serif;
+  font-size: 14px;
+  background-color: #e8e8e8;
+}
+
+/* 游戏名称及主体 */
+.intro, .container {
+  margin: 20px auto;
+  width: 400px;
+  text-align: center;
+}
+
+.intro {
+  font-size: 3rem;
+  letter-spacing: 2px;
+  color: #776e65;
+}
+
+.container {
+  height: 400px;
+  background-color: #bbada0;
+  position: relative;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.box {
+  background-color: #cdc1b4;
+  width: 90px;
+  height: 90px;
+  position: absolute;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.box:nth-child(1) {
+  left: 8px;
+  top: 8px;
+}
+
+.box:nth-child(2) {
+  left: 106px;
+  top: 8px;
+}
+
+.box:nth-child(3) {
+  left: 204px;
+  top: 8px;
+}
+
+.box:nth-child(4) {
+  left: 302px;
+  top: 8px;
+}
+
+.box:nth-child(5) {
+  left: 8px;
+  top: 106px;
+}
+
+.box:nth-child(6) {
+  left: 106px;
+  top: 106px;
+}
+
+.box:nth-child(7) {
+  left: 204px;
+  top: 106px;
+}
+
+.box:nth-child(8) {
+  left: 302px;
+  top: 106px;
+}
+
+.box:nth-child(9) {
+  left: 8px;
+  top: 204px;
+}
+
+.box:nth-child(10) {
+  left: 106px;
+  top: 204px;
+}
+
+.box:nth-child(11) {
+  left: 204px;
+  top: 204px;
+}
+
+.box:nth-child(12) {
+  left: 302px;
+  top: 204px;
+}
+
+.box:nth-child(13) {
+  left: 8px;
+  top: 302px;
+}
+
+.box:nth-child(14) {
+  left: 106px;
+  top: 302px;
+}
+
+.box:nth-child(15) {
+  left: 204px;
+  top: 302px;
+}
+
+.box:nth-child(16) {
+  left: 302px;
+  top: 302px;
+}
+
+/* new game按钮 */
+.new {
+  display: block;
+  width: 100px;
+  height: 40px;
+  margin: 0 auto;
+  font-size: 16px;
+  background-color: #FB812F;
+  outline: none;
+  border: 1px solid #FB812F;
+  cursor: pointer;
+  color: #ffffff;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  transition: all .5s;
+}
+
+.new:hover {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: #FB812F;
+}
+
+/*# sourceMappingURL=style.css.map */
