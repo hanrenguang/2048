@@ -22,6 +22,20 @@ var colorInfo = {
 	other: "#ffffff"
 };
 
+/* 保存位置信息 */
+var locatInfo = [];
+(function() {
+	for(var i = 0; i < 16; i++) {
+		var temp = i + 1;
+		var j = Math.ceil(temp / 4);
+		var k = (temp % 4 == 0)? 4 : temp%4;
+		locatInfo[i] = {
+			top: j * 8 + (j - 1) * 105 + "px",
+			left: k * 8 + (k - 1) * 105 + "px"
+		};
+	}
+})();
+
 /* 保存所有在页面上的数字元素 */
 var Elem = [];
 
@@ -53,7 +67,17 @@ window.onload = function() {
 		var currKey = e.keyCode || e.which; //left37,up38,right39,down40;
 		var isDirect = true;
 
+		//判断上一次运动是否结束
+		if(status == true) {
+			return ;
+		}
+
+		if(currKey >= 37 && currKey <= 40) {
+			status = true;  //开始运动
+		}
+
 		//事件处理
+
 		if(currKey == 37) { //left
 			moveEvent("left");
 		}
@@ -99,12 +123,10 @@ function createNew(a) {
 
 	//选择2或4插入
 	if(rand >= 7 && !a) {
-		newDiv.setAttribute("data-num", '4');
 		newDiv.innerHTML = 4;
 		newDiv.style.backgroundColor = colorInfo.bgColor['4'];
 	}
 	else {
-		newDiv.setAttribute("data-num", '2');
 		newDiv.innerHTML = 2;
 		newDiv.style.backgroundColor = colorInfo.bgColor['2'];
 	}
@@ -127,6 +149,7 @@ function createNew(a) {
 			break;
 	}
 	newDiv.style.top = differ*8+105*(differ-1)+"px";
+	newDiv.setAttribute("data-add", '');
 
 	//插入页面中
 	Elem.push(newDiv);
@@ -146,8 +169,18 @@ function addHandler(element, type, handler) {
 	}
 }
 
+//生成相加后的数字
+function add(elem) {
+	elem.innerHTML = elem.innerHTML * 2;
+	elem.style.backgroundColor = colorInfo.bgColor[elem.innerHTML + ''];
+	if(elem.innerHTML > 4) {
+		elem.style.color = colorInfo.other;
+	}
+}
+
 //移动动画
 function moveEvent(direct) {
+	var arr = [[],[],[],[]];
 	//先将元素数组排序
 	Elem.sort(function(value1, value2) {
 		var v1 = parseInt(value1.getAttribute("data-locat"));
@@ -160,6 +193,113 @@ function moveEvent(direct) {
 		}
 	});
 
+	if(direct == "left" || direct == "right") {
+		Elem.forEach(function(item) {
+			var locat = parseInt(item.getAttribute("data-locat"));
+			if(locat <= 4) {
+				arr[0].push(item);
+			}
+			else if(locat <= 8) {
+				arr[1].push(item);
+			}
+			else if(locat <= 12) {
+				arr[2].push(item);
+			}
+			else {
+				arr[3].push(item);
+			}
+		});
+	}
+	else {
+		Elem.forEach(function(item) {
+			var locat = parseInt(item.getAttribute("data-locat"));
+			if(locat % 4 == 1) {
+				arr[0].push(item);
+			}
+			else if(locat % 4 == 2) {
+				arr[1].push(item);
+			}
+			else if(locat % 4 == 3) {
+				arr[2].push(item);
+			}
+			else {
+				arr[3].push(item);
+			}
+		});
+	}
+
 	//判断是否有相加
+	if(direct == "left" && direct == "top") {
+		arr.forEach(function(item) {
+			if(item.length == 2 || item.length == 3) {
+				if(item[0].innerHTML === item[1].innerHTML) {
+					item[0].setAttribute("data-add", 1);
+					item[1].setAttribute("data-add", 1);
+				}
+				else if(item.length == 3 && item[1].innerHTML === item[2].innerHTML) {
+					item[1].setAttribute("data-add", 1);
+					item[2].setAttribute("data-add", 1);
+				}
+			}
+			else if(item.length == 4) {
+				if(item[0].innerHTML === item[1].innerHTML) {
+					item[0].setAttribute("data-add", 1);
+					item[1].setAttribute("data-add", 1);
+					if(item[2].innerHTML === item[3].innerHTML) {
+						item[2].setAttribute("data-add", 1);
+						item[3].setAttribute("data-add", 1);
+					}
+				}
+				else if(item[1].innerHTML === item[2].innerHTML) {
+					item[1].setAttribute("data-add", 1);
+					item[2].setAttribute("data-add", 1);
+				}
+				else if(item[2].innerHTML === item[3].innerHTML) {
+					item[2].setAttribute("data-add", 1);
+					item[3].setAttribute("data-add", 1);
+				}
+			}	
+		});
+	}
+	else {
+		arr.forEach(function(item) {
+			if(item.length == 2) {
+				if(item[0].innerHTML === item[1].innerHTML) {
+					item[0].setAttribute("data-add", 1);
+					item[1].setAttribute("data-add", 1);
+				}
+			}
+			else if(item.length == 3) {
+				if(item[1].innerHTML === item[2].innerHTML) {
+					item[1].setAttribute("data-add", 1);
+					item[2].setAttribute("data-add", 1);
+				}
+				else if(item[0].innerHTML === item[1].innerHTML) {
+					item[0].setAttribute("data-add", 1);
+					item[1].setAttribute("data-add", 1);
+				}
+			}
+			else if(item.length == 4) {
+				if(item[2].innerHTML === item[3].innerHTML) {
+					item[2].setAttribute("data-add", 1);
+					item[3].setAttribute("data-add", 1);
+					if(item[0].innerHTML === item[1].innerHTML) {
+						item[0].setAttribute("data-add", 1);
+						item[1].setAttribute("data-add", 1);
+					}
+				}
+				else if(item[1].innerHTML === item[2].innerHTML) {
+					item[1].setAttribute("data-add", 1);
+					item[2].setAttribute("data-add", 1);
+				}
+				else if(item[0].innerHTML === item[1].innerHTML) {
+					item[0].setAttribute("data-add", 1);
+					item[1].setAttribute("data-add", 1);
+				}
+			}	
+		});
+	}
+
+	//计算各个元素的位置
 	
 }
