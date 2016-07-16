@@ -122,7 +122,7 @@ function createNew(a) {
 	var randL = Math.ceil((16 - len) * Math.random()) - 1;
 
 	//选择2或4插入
-	if(rand >= 7 && !a) {
+	if(rand >= 8 && !a) {
 		newDiv.innerHTML = 4;
 		newDiv.style.backgroundColor = colorInfo.bgColor['4'];
 	}
@@ -150,6 +150,7 @@ function createNew(a) {
 	}
 	newDiv.style.top = differ*8+105*(differ-1)+"px";
 	newDiv.setAttribute("data-add", '');
+	newDiv.setAttribute("data-status", '');
 
 	//插入页面中
 	Elem.push(newDiv);
@@ -170,12 +171,18 @@ function addHandler(element, type, handler) {
 }
 
 //生成相加后的数字
-function add(elem) {
-	elem.innerHTML = elem.innerHTML * 2;
+function addElem(elem) {
+	elem.innerHTML = parseInt(elem.innerHTML) * 2;
 	elem.style.backgroundColor = colorInfo.bgColor[elem.innerHTML + ''];
-	if(elem.innerHTML > 4) {
+	if(parseInt(elem.innerHTML) > 4) {
 		elem.style.color = colorInfo.other;
 	}
+}
+
+//删除不必要的元素
+function delElem(elem) {
+	var parent = document.querySelector(".container");
+	parent.removeChild(elem);
 }
 
 //移动动画
@@ -229,77 +236,388 @@ function moveEvent(direct) {
 	}
 
 	//判断是否有相加
-	if(direct == "left" && direct == "top") {
-		arr.forEach(function(item) {
+	var item;
+	if(direct == "left" || direct == "top") {
+		for(var i = 0; i < arr.length; i++) {
+			item = arr[i];
 			if(item.length == 2 || item.length == 3) {
-				if(item[0].innerHTML === item[1].innerHTML) {
+				if(parseInt(item[0].innerHTML) == parseInt(item[1].innerHTML)) {
 					item[0].setAttribute("data-add", 1);
 					item[1].setAttribute("data-add", 1);
+					item[0].setAttribute("data-status", "add");
+					item[1].setAttribute("data-status", "del");
 				}
-				else if(item.length == 3 && item[1].innerHTML === item[2].innerHTML) {
+				else if(item.length == 3 && (parseInt(item[1].innerHTML) == parseInt(item[2].innerHTML))) {
 					item[1].setAttribute("data-add", 1);
 					item[2].setAttribute("data-add", 1);
+					item[1].setAttribute("data-status", "add");
+					item[2].setAttribute("data-status", "del");
 				}
 			}
 			else if(item.length == 4) {
-				if(item[0].innerHTML === item[1].innerHTML) {
+				if(parseInt(item[0].innerHTML) == parseInt(item[1].innerHTML)) {
 					item[0].setAttribute("data-add", 1);
 					item[1].setAttribute("data-add", 1);
-					if(item[2].innerHTML === item[3].innerHTML) {
-						item[2].setAttribute("data-add", 1);
-						item[3].setAttribute("data-add", 1);
+					item[0].setAttribute("data-status", "add");
+					item[1].setAttribute("data-status", "del");
+					if(parseInt(item[2].innerHTML) == parseInt(item[3].innerHTML)) {
+						item[2].setAttribute("data-add", 2);
+						item[3].setAttribute("data-add", 2);
+						item[2].setAttribute("data-status", "add");
+						item[3].setAttribute("data-status", "del");
 					}
 				}
-				else if(item[1].innerHTML === item[2].innerHTML) {
+				else if(parseInt(item[1].innerHTML) == parseInt(item[2].innerHTML)) {
 					item[1].setAttribute("data-add", 1);
 					item[2].setAttribute("data-add", 1);
+					item[1].setAttribute("data-status", "add");
+					item[2].setAttribute("data-status", "del");
 				}
-				else if(item[2].innerHTML === item[3].innerHTML) {
+				else if(parseInt(item[2].innerHTML) == parseInt(item[3].innerHTML)) {
 					item[2].setAttribute("data-add", 1);
 					item[3].setAttribute("data-add", 1);
+					item[2].setAttribute("data-status", "add");
+					item[3].setAttribute("data-status", "del");
 				}
 			}	
-		});
+		}
 	}
 	else {
-		arr.forEach(function(item) {
+		for(var i = 0; i < arr.length; i++) {
+			item = arr[i];
 			if(item.length == 2) {
-				if(item[0].innerHTML === item[1].innerHTML) {
+				if(item[0].innerHTML == item[1].innerHTML) {
 					item[0].setAttribute("data-add", 1);
 					item[1].setAttribute("data-add", 1);
+					item[1].setAttribute("data-status", "add");
+					item[0].setAttribute("data-status", "del");
 				}
 			}
 			else if(item.length == 3) {
-				if(item[1].innerHTML === item[2].innerHTML) {
+				if(item[1].innerHTML == item[2].innerHTML) {
 					item[1].setAttribute("data-add", 1);
 					item[2].setAttribute("data-add", 1);
+					item[2].setAttribute("data-status", "add");
+					item[1].setAttribute("data-status", "del");
 				}
-				else if(item[0].innerHTML === item[1].innerHTML) {
+				else if(item[0].innerHTML == item[1].innerHTML) {
 					item[0].setAttribute("data-add", 1);
 					item[1].setAttribute("data-add", 1);
+					item[1].setAttribute("data-status", "add");
+					item[0].setAttribute("data-status", "del");
 				}
 			}
 			else if(item.length == 4) {
-				if(item[2].innerHTML === item[3].innerHTML) {
+				if(item[2].innerHTML == item[3].innerHTML) {
 					item[2].setAttribute("data-add", 1);
 					item[3].setAttribute("data-add", 1);
-					if(item[0].innerHTML === item[1].innerHTML) {
-						item[0].setAttribute("data-add", 1);
-						item[1].setAttribute("data-add", 1);
+					item[3].setAttribute("data-status", "add");
+					item[2].setAttribute("data-status", "del");
+					if(item[0].innerHTML == item[1].innerHTML) {
+						item[0].setAttribute("data-add", 2);
+						item[1].setAttribute("data-add", 2);
+						item[1].setAttribute("data-status", "add");
+						item[0].setAttribute("data-status", "del");
 					}
 				}
-				else if(item[1].innerHTML === item[2].innerHTML) {
+				else if(item[1].innerHTML == item[2].innerHTML) {
 					item[1].setAttribute("data-add", 1);
 					item[2].setAttribute("data-add", 1);
+					item[2].setAttribute("data-status", "add");
+					item[1].setAttribute("data-status", "del");
 				}
-				else if(item[0].innerHTML === item[1].innerHTML) {
+				else if(item[0].innerHTML == item[1].innerHTML) {
 					item[0].setAttribute("data-add", 1);
 					item[1].setAttribute("data-add", 1);
+					item[1].setAttribute("data-status", "add");
+					item[0].setAttribute("data-status", "del");
 				}
 			}	
-		});
+		}
 	}
 
 	//计算各个元素的位置
-	
+	var m = null;
+	if(direct == "left") {
+		for(var i = 0; i < arr.length; i++) {
+			item = arr[i];
+			if(item.length == 0) {
+				continue;
+			}
+			m = Math.ceil(parseInt(item[0].getAttribute("data-locat"))/4);
+			console.log(m);
+			item[0].setAttribute("data-locat", (m-1)*4+1);
+			if(item.length == 2) {
+				if(item[0].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", (m-1)*4+1);
+					console.log('a');
+				}
+				else {
+					item[1].setAttribute("data-locat", (m-1)*4+2);
+					console.log('b');
+				}
+			}
+			else if(item.length == 3) {
+				if(item[0].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", (m-1)*4+1);
+					item[2].setAttribute("data-locat", (m-1)*4+2);
+					console.log('c');
+				}
+				else if(item[1].getAttribute("data-add") == 1){
+					item[1].setAttribute("data-locat", (m-1)*4+2);
+					item[2].setAttribute("data-locat", (m-1)*4+2);
+					console.log('d');
+				}
+				else {
+					item[1].setAttribute("data-locat", (m-1)*4+2);
+					item[2].setAttribute("data-locat", (m-1)*4+3);
+					console.log('e');
+				}
+			}
+			else if(item.length == 4) {
+				if(item[0].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", (m-1)*4+1);
+					console.log('f');
+					if(item[2].getAttribute("data-add") == 2) {
+						item[2].setAttribute("data-locat", (m-1)*4+2);
+						item[3].setAttribute("data-locat", (m-1)*4+2);
+						console.log('g');
+					}
+					else {
+						item[2].setAttribute("data-locat", (m-1)*4+2);
+						item[3].setAttribute("data-locat", (m-1)*4+3);
+						console.log('h');
+					}
+				}
+				else if(item[1].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", (m-1)*4+2);
+					item[2].setAttribute("data-locat", (m-1)*4+2);
+					item[3].setAttribute("data-locat", (m-1)*4+3);
+					console.log('i');
+				}
+				else if(item[2].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", (m-1)*4+2);
+					item[2].setAttribute("data-locat", (m-1)*4+3);
+					item[3].setAttribute("data-locat", (m-1)*4+3);
+					console.log('j');
+				}
+				else {
+					item[1].setAttribute("data-locat", (m-1)*4+2);
+					item[2].setAttribute("data-locat", (m-1)*4+3);
+					item[3].setAttribute("data-locat", (m-1)*4+4);
+					console.log('k');
+				}
+			}
+		}
+	}
+	else if(direct == "top") {
+		for(var i = 0; i < arr.length; i++) {
+			item = arr[i];
+			if(item.length == 0) {
+				continue;
+			}
+			m = (parseInt(item[0].getAttribute("data-locat"))%4 == 0)?4:parseInt(item[0].getAttribute("data-locat"))%4;
+			item[0].setAttribute("data-locat", m);
+			if(item.length == 2) {
+				if(item[0].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", m);
+				}
+				else {
+					item[1].setAttribute("data-locat", m+4);
+				}
+			}
+			else if(item.length == 3) {
+				if(item[0].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", m);
+					item[2].setAttribute("data-locat", m+4);
+				}
+				else if(item[1].getAttribute("data-add") == 1){
+					item[1].setAttribute("data-locat", m+4);
+					item[2].setAttribute("data-locat", m+4);
+				}
+				else {
+					item[1].setAttribute("data-locat", m+4);
+					item[2].setAttribute("data-locat", m+8);
+				}
+			}
+			else if(item.length == 4) {
+				if(item[0].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", m);
+					if(item[2].getAttribute("data-add") == 2) {
+						item[2].setAttribute("data-locat", m+4);
+						item[3].setAttribute("data-locat", m+4);
+					}
+					else {
+						item[2].setAttribute("data-locat", m+4);
+						item[3].setAttribute("data-locat", m+8);
+					}
+				}
+				else if(item[1].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", m+4);
+					item[2].setAttribute("data-locat", m+4);
+					item[3].setAttribute("data-locat", m+8);
+				}
+				else if(item[2].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", m+4);
+					item[2].setAttribute("data-locat", m+8);
+					item[3].setAttribute("data-locat", m+8);
+				}
+				else {
+					item[1].setAttribute("data-locat", m+4);
+					item[2].setAttribute("data-locat", m+8);
+					item[3].setAttribute("data-locat", m+12);
+				}
+			}
+		}
+	}
+	else if(direct == "right") {
+		for(var i = 0; i < arr.length; i++) {
+			item = arr[i];
+			if(item.length == 0) {
+				continue;
+			}
+			m = Math.ceil(parseInt(item[0].getAttribute("data-locat"))/4);
+			item[item.length-1].setAttribute("data-locat", m*4);
+			if(item.length == 2) {
+				if(item[1].getAttribute("data-add") == 1) {
+					item[0].setAttribute("data-locat", m*4);
+				}
+				else {
+					item[0].setAttribute("data-locat", m*4-1);
+				}
+			}
+			else if(item.length == 3) {
+				if(item[2].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", m*4);
+					item[0].setAttribute("data-locat", m*4-1);
+				}
+				else if(item[1].getAttribute("data-add") == 1){
+					item[1].setAttribute("data-locat", m*4-1);
+					item[0].setAttribute("data-locat", m*4-1);
+				}
+				else {
+					item[1].setAttribute("data-locat", m*4-1);
+					item[0].setAttribute("data-locat", m*4-2);
+				}
+			}
+			else if(item.length == 4) {
+				if(item[3].getAttribute("data-add") == 1) {
+					item[2].setAttribute("data-locat", m*4);
+					if(item[1].getAttribute("data-add") == 2) {
+						item[1].setAttribute("data-locat", m*4-1);
+						item[0].setAttribute("data-locat", m*4-1);
+					}
+					else {
+						item[1].setAttribute("data-locat", m*4-1);
+						item[0].setAttribute("data-locat", m*4-2);
+					}
+				}
+				else if(item[2].getAttribute("data-add") == 1) {
+					item[2].setAttribute("data-locat", m*4-1);
+					item[1].setAttribute("data-locat", m*4-1);
+					item[0].setAttribute("data-locat", m*4-2);
+				}
+				else if(item[1].getAttribute("data-add") == 1) {
+					item[2].setAttribute("data-locat", m*4-1);
+					item[1].setAttribute("data-locat", m*4-2);
+					item[0].setAttribute("data-locat", m*4-2);
+				}
+				else {
+					item[2].setAttribute("data-locat", m*4-1);
+					item[1].setAttribute("data-locat", m*4-2);
+					item[0].setAttribute("data-locat", m*4-3);
+				}
+			}
+		}
+	}
+	else if(direct == "bottom") {
+		for(var i = 0; i < arr.length; i++) {
+			item = arr[i];
+			if(item.length == 0) {
+				continue;
+			}
+			m = (parseInt(item[0].getAttribute("data-locat"))%4 == 0)?4:parseInt(item[0].getAttribute("data-locat"))%4;
+			item[item.length-1].setAttribute("data-locat", m+12);
+			if(item.length == 2) {
+				if(item[1].getAttribute("data-add") == 1) {
+					item[0].setAttribute("data-locat", m+12);
+				}
+				else {
+					item[0].setAttribute("data-locat", m+8);
+				}
+			}
+			else if(item.length == 3) {
+				if(item[2].getAttribute("data-add") == 1) {
+					item[1].setAttribute("data-locat", m+12);
+					item[0].setAttribute("data-locat", m+8);
+				}
+				else if(item[1].getAttribute("data-add") == 1){
+					item[1].setAttribute("data-locat", m+8);
+					item[0].setAttribute("data-locat", m+8);
+				}
+				else {
+					item[1].setAttribute("data-locat", m+8);
+					item[0].setAttribute("data-locat", m+4);
+				}
+			}
+			else if(item.length == 4) {
+				if(item[3].getAttribute("data-add") == 1) {
+					item[2].setAttribute("data-locat", m+12);
+					if(item[1].getAttribute("data-add") == 2) {
+						item[1].setAttribute("data-locat", m+8);
+						item[0].setAttribute("data-locat", m+8);
+					}
+					else {
+						item[1].setAttribute("data-locat", m+8);
+						item[0].setAttribute("data-locat", m+4);
+					}
+				}
+				else if(item[2].getAttribute("data-add") == 1) {
+					item[2].setAttribute("data-locat", m+8);
+					item[1].setAttribute("data-locat", m+8);
+					item[0].setAttribute("data-locat", m+4);
+				}
+				else if(item[1].getAttribute("data-add") == 1) {
+					item[2].setAttribute("data-locat", m+8);
+					item[1].setAttribute("data-locat", m+4);
+					item[0].setAttribute("data-locat", m+4);
+				}
+				else {
+					item[2].setAttribute("data-locat", m+8);
+					item[1].setAttribute("data-locat", m+4);
+					item[0].setAttribute("data-locat", m);
+				}
+			}
+		}
+	}
+
+	//开始移动
+	for(var i = 0; i < Elem.length; i++) {	
+		Elem[i].className = "move";
+		var l = parseInt(Elem[i].getAttribute("data-locat"));
+		Elem[i].style.top = locatInfo[l-1].top;
+		Elem[i].style.left = locatInfo[l-1].left;
+	}
+
+	setTimeout(function() {
+		//属性值恢复初始状态及碰撞处理
+		for(var i = 0; i < Elem.length; i++) {
+			if(Elem[i].getAttribute("data-status") == "del") {
+				delElem(Elem[i]);
+				Elem.splice(i, 1);
+				i--;
+			}
+			else if(Elem[i].getAttribute("data-status") == "add") {
+				addElem(Elem[i]);
+				Elem[i].setAttribute("data-add", '');
+				Elem[i].setAttribute("data-status", '');
+			}
+		}
+	}, 60);
+
+	//过100毫秒添加一个新元素并将状态装换回来
+	setTimeout(function() {
+		createNew();
+		status = false;
+	}, 100);
 }
