@@ -173,9 +173,9 @@ html, body {
 
 /* 上下左右移动 */
 .move {
-  -webkit-transition: left .05s, top .05s, right .05s, bottom .05s;
-  -moz-transition: left .05s, top .05s, right .05s, bottom .05s;
-  transition: left .05s, top .05s, right .05s, bottom .05s;
+  -webkit-transition: left .1s, top .1s;
+  -moz-transition: left .1s, top .1s;
+  transition: left .1s, top .1s;
 }
 
 /*# sourceMappingURL=style.css.map */
