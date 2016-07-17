@@ -47,18 +47,15 @@ window.onload = function() {
 	var allBox = document.querySelectorAll(".box");
 	//new game按钮
 	var newGame = document.querySelector(".new");
-	var parent = document.querySelector(".container");
+	//try again按钮
+	var tryAgain = document.querySelector(".gameover button");
 
 	//初始化
 	init();
 
 	//新游戏
 	addHandler(newGame, "click", function() {
-		Elem.forEach(function(item) {
-			parent.removeChild(item);
-		});
-		Elem = [];
-		init();
+		anotherGame();
 	});
 
 	//监听方向键事件
@@ -103,6 +100,12 @@ window.onload = function() {
 				e.returnValue = false;
 			}
 		}
+	});
+
+	//给try again按钮添加点击事件
+	addHandler(tryAgain, "click", function() {
+		hideBox();
+		anotherGame();
 	});
 };
 
@@ -155,6 +158,16 @@ function createNew(a) {
 	//插入页面中
 	Elem.push(newDiv);
 	parent.appendChild(newDiv);
+}
+
+//新游戏
+function anotherGame() {
+	var parent = document.querySelector(".container");
+	Elem.forEach(function(item) {
+		parent.removeChild(item);
+	});
+	Elem = [];
+	init();
 }
 
 //添加事件监听
@@ -242,8 +255,8 @@ function moveEvent(direct) {
 			array.forEach(function(item) {
 				x = x + judgeEnd(item);
 			});
-			if(x == 4) {
-				alert("gameover!");
+			if(x == 4) {  //游戏结束
+				showBox();
 			}
 			else {
 				Elem.forEach(function(it) {
@@ -252,7 +265,12 @@ function moveEvent(direct) {
 				});
 			}
 		}
-		status = false;
+		if(x == 4) {
+			status = true;
+		}
+		else {
+			status = false;
+		}
 	}, 100);
 }
 
@@ -692,4 +710,18 @@ function judgeEnd(direct) {
 	else {
 		return 0;
 	}
+}
+
+//游戏结束后提示
+function showBox() {
+	var box = document.querySelector(".gameover");
+	box.style.zIndex = "99";
+	box.style.opacity = "1";
+}
+
+//重新开始隐藏提示框
+function hideBox() {
+	var box = document.querySelector(".gameover");
+	box.style.zIndex = "-1";
+	box.style.opacity = "0";
 }
