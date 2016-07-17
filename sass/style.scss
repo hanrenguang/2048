@@ -80,6 +80,52 @@ $differ: 8px;
 	}
 }
 
+/* 游戏结束显示 */
+@mixin transition {
+	-webkit-transition: background-color .5s, color .5s;
+	   -moz-transition: background-color .5s, color .5s;
+	        transition: background-color .5s, color .5s;
+}
+div.gameover {
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	background-color: rgba(255,255,255,.6);
+	width: ($differ + $width) * 4 + $differ;
+	height: ($differ + $width) * 4 + $differ;
+	@include border-radius;
+	-webkit-transition: opacity .7s;
+	   -moz-transition: opacity .7s;
+	        transition: opacity .7s;
+}
+.gameover p {
+	margin-top: 150px;
+	font-size: 4rem;
+	color: #776e65;
+}
+.gameover button {
+	background-color: #8f7965;
+	color: #ffffff;
+	border: 1px solid #8f7965;
+	font-size: 1.5rem;
+	display: block;
+	margin: 0 auto;
+	outline: none;
+	width: 120px;
+	text-align: center;
+	font-family: "Microsoft Yahei", sans-serif;
+	line-height: 40px;
+	cursor: pointer;
+	@include border-radius;
+	@include transition;
+}
+.gameover button:hover {
+	background-color: #ffffff;
+	color: #8f7965
+}
+
 /* new game按钮 */
 $white: #ffffff;
 $orange: #FB812F;
@@ -120,11 +166,8 @@ $show_width: $width*4 + $differ*5;
 }
 
 /* 上下左右移动 */
-@mixin transition {
+.move {
 	-webkit-transition: left .1s, top .1s;
 	   -moz-transition: left .1s, top .1s;
 	        transition: left .1s, top .1s;
-}
-.move {
-	@include transition;
 }
