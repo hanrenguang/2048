@@ -55,6 +55,7 @@ window.onload = function() {
 
 	//新游戏
 	addHandler(newGame, "click", function() {
+		hideBox();
 		anotherGame();
 	});
 
@@ -163,6 +164,8 @@ function createNew(a) {
 //新游戏
 function anotherGame() {
 	var parent = document.querySelector(".container");
+	var score = document.querySelector("#score");
+	score.innerHTML = 0;
 	Elem.forEach(function(item) {
 		parent.removeChild(item);
 	});
