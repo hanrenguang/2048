@@ -122,7 +122,7 @@ function createNew(a) {
 	var randL = Math.ceil((16 - len) * Math.random()) - 1;
 
 	//选择2或4插入
-	if(rand >= 8 && !a) {
+	if(rand <= 1 && !a) {
 		newDiv.innerHTML = 4;
 		newDiv.style.backgroundColor = colorInfo.bgColor['4'];
 	}
@@ -174,9 +174,17 @@ function addHandler(element, type, handler) {
 function addElem(elem) {
 	elem.innerHTML = parseInt(elem.innerHTML) * 2;
 	elem.style.backgroundColor = colorInfo.bgColor[elem.innerHTML + ''];
-	if(parseInt(elem.innerHTML) > 4) {
+	var n = parseInt(elem.innerHTML);
+	if(n > 4) {
 		elem.style.color = colorInfo.other;
+		if(n >= 1024) {
+			elem.style.fontSize = "3rem";
+		}
 	}
+	//计分
+	var score = document.querySelector("#score");
+	var num = parseInt(score.innerHTML);
+	score.innerHTML = num + n;
 }
 
 //删除不必要的元素
@@ -187,8 +195,70 @@ function delElem(elem) {
 
 //移动动画
 function moveEvent(direct) {
-	var arr = [[],[],[],[]];
 	//先将元素数组排序
+	var arr = sortArr(direct, arr);
+
+	//判断位置是否不变
+	var isChange = isSame(direct, arr);
+
+	//判断是否有相加
+	judgeAdd(direct, arr);
+
+	//判断是否移动
+	var isRun = isMove();
+	if(isChange == "nochange" && isRun == "no") {
+		return ;
+	}
+
+	//计算各个元素的位置
+	compLocat(direct, arr);
+
+	//开始移动
+	beginMove();
+
+	setTimeout(function() {
+		//属性值恢复初始状态及碰撞处理
+		for(var i = 0; i < Elem.length; i++) {
+			if(Elem[i].getAttribute("data-status") == "del") {
+				delElem(Elem[i]);
+				Elem.splice(i, 1);
+				i--;
+			}
+			else if(Elem[i].getAttribute("data-status") == "add") {
+				addElem(Elem[i]);
+				Elem[i].setAttribute("data-add", '');
+				Elem[i].setAttribute("data-status", '');
+			}
+		}
+	}, 60);
+
+	//过100毫秒添加一个新元素并将状态装换回来
+	setTimeout(function() {
+		var array = ["left","top","right","bottom"];
+		var isFail = [];
+		var x = 0;
+		createNew();
+		if(Elem.length == 16) { //判断游戏是否结束
+			array.forEach(function(item) {
+				x = x + judgeEnd(item);
+			});
+			if(x == 4) {
+				alert("gameover!");
+			}
+			else {
+				Elem.forEach(function(it) {
+					it.setAttribute("data-add", '');
+					it.setAttribute("data-status", '');
+				});
+			}
+		}
+		status = false;
+	}, 100);
+}
+
+//先将元素数组排序
+function sortArr(direct, arr) {
+	arr = [[],[],[],[]];
 	Elem.sort(function(value1, value2) {
 		var v1 = parseInt(value1.getAttribute("data-locat"));
 		var v2 = parseInt(value2.getAttribute("data-locat"));
@@ -234,8 +304,11 @@ function moveEvent(direct) {
 			}
 		});
 	}
+	return arr;
+}
 
-	//判断是否有相加
+//判断是否有相加
+function judgeAdd(direct, arr) {
 	var item;
 	if(direct == "left" || direct == "top") {
 		for(var i = 0; i < arr.length; i++) {
@@ -335,289 +408,288 @@ function moveEvent(direct) {
 			}	
 		}
 	}
+}
 
-	//计算各个元素的位置
-	var m = null;
-	if(direct == "left") {
+//计算位置
+function compLocat(direct, arr) {
+	var m = [];
+	var n = null;
+	if(direct == "left" || direct == "top") {
 		for(var i = 0; i < arr.length; i++) {
 			item = arr[i];
 			if(item.length == 0) {
 				continue;
 			}
-			m = Math.ceil(parseInt(item[0].getAttribute("data-locat"))/4);
-			console.log(m);
-			item[0].setAttribute("data-locat", (m-1)*4+1);
+
+			if(direct == "left") {
+				n = Math.ceil(parseInt(item[0].getAttribute("data-locat"))/4);
+				m[0] = (n-1)*4+1;
+				m[1] = (n-1)*4+2;
+				m[2] = (n-1)*4+3;
+				m[3] = (n-1)*4+4;
+			}
+			else {
+				n = (parseInt(item[0].getAttribute("data-locat"))%4 == 0)?4:parseInt(item[0].getAttribute("data-locat"))%4;
+				m[0] = n;
+				m[1] = n+4;
+				m[2] = n+8;
+				m[3] = n+12;
+			}
+
+			item[0].setAttribute("data-locat", m[0]);
 			if(item.length == 2) {
 				if(item[0].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", (m-1)*4+1);
-					console.log('a');
+					item[1].setAttribute("data-locat", m[0]);
 				}
 				else {
-					item[1].setAttribute("data-locat", (m-1)*4+2);
-					console.log('b');
+					item[1].setAttribute("data-locat", m[1]);
 				}
 			}
 			else if(item.length == 3) {
 				if(item[0].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", (m-1)*4+1);
-					item[2].setAttribute("data-locat", (m-1)*4+2);
-					console.log('c');
+					item[1].setAttribute("data-locat", m[0]);
+					item[2].setAttribute("data-locat", m[1]);
 				}
 				else if(item[1].getAttribute("data-add") == 1){
-					item[1].setAttribute("data-locat", (m-1)*4+2);
-					item[2].setAttribute("data-locat", (m-1)*4+2);
-					console.log('d');
+					item[1].setAttribute("data-locat", m[1]);
+					item[2].setAttribute("data-locat", m[1]);
 				}
 				else {
-					item[1].setAttribute("data-locat", (m-1)*4+2);
-					item[2].setAttribute("data-locat", (m-1)*4+3);
-					console.log('e');
+					item[1].setAttribute("data-locat", m[1]);
+					item[2].setAttribute("data-locat", m[2]);
 				}
 			}
 			else if(item.length == 4) {
 				if(item[0].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", (m-1)*4+1);
-					console.log('f');
+					item[1].setAttribute("data-locat", m[0]);
 					if(item[2].getAttribute("data-add") == 2) {
-						item[2].setAttribute("data-locat", (m-1)*4+2);
-						item[3].setAttribute("data-locat", (m-1)*4+2);
-						console.log('g');
+						item[2].setAttribute("data-locat", m[1]);
+						item[3].setAttribute("data-locat", m[1]);
 					}
 					else {
-						item[2].setAttribute("data-locat", (m-1)*4+2);
-						item[3].setAttribute("data-locat", (m-1)*4+3);
-						console.log('h');
+						item[2].setAttribute("data-locat", m[1]);
+						item[3].setAttribute("data-locat", m[2]);
 					}
 				}
 				else if(item[1].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", (m-1)*4+2);
-					item[2].setAttribute("data-locat", (m-1)*4+2);
-					item[3].setAttribute("data-locat", (m-1)*4+3);
-					console.log('i');
+					item[1].setAttribute("data-locat", m[1]);
+					item[2].setAttribute("data-locat", m[1]);
+					item[3].setAttribute("data-locat", m[2]);
 				}
 				else if(item[2].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", (m-1)*4+2);
-					item[2].setAttribute("data-locat", (m-1)*4+3);
-					item[3].setAttribute("data-locat", (m-1)*4+3);
-					console.log('j');
+					item[1].setAttribute("data-locat", m[1]);
+					item[2].setAttribute("data-locat", m[2]);
+					item[3].setAttribute("data-locat", m[2]);
 				}
 				else {
-					item[1].setAttribute("data-locat", (m-1)*4+2);
-					item[2].setAttribute("data-locat", (m-1)*4+3);
-					item[3].setAttribute("data-locat", (m-1)*4+4);
-					console.log('k');
+					item[1].setAttribute("data-locat", m[1]);
+					item[2].setAttribute("data-locat", m[2]);
+					item[3].setAttribute("data-locat", m[3]);
 				}
 			}
 		}
 	}
-	else if(direct == "top") {
+	else {
 		for(var i = 0; i < arr.length; i++) {
 			item = arr[i];
 			if(item.length == 0) {
 				continue;
 			}
-			m = (parseInt(item[0].getAttribute("data-locat"))%4 == 0)?4:parseInt(item[0].getAttribute("data-locat"))%4;
-			item[0].setAttribute("data-locat", m);
-			if(item.length == 2) {
-				if(item[0].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", m);
-				}
-				else {
-					item[1].setAttribute("data-locat", m+4);
-				}
+
+			if(direct == "right") {
+				n = Math.ceil(parseInt(item[0].getAttribute("data-locat"))/4);
+				m[0] = n*4;
+				m[1] = n*4-1;
+				m[2] = n*4-2;
+				m[3] = n*4-3;
 			}
-			else if(item.length == 3) {
-				if(item[0].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", m);
-					item[2].setAttribute("data-locat", m+4);
-				}
-				else if(item[1].getAttribute("data-add") == 1){
-					item[1].setAttribute("data-locat", m+4);
-					item[2].setAttribute("data-locat", m+4);
-				}
-				else {
-					item[1].setAttribute("data-locat", m+4);
-					item[2].setAttribute("data-locat", m+8);
-				}
+			else {
+				n = (parseInt(item[0].getAttribute("data-locat"))%4 == 0)?4:parseInt(item[0].getAttribute("data-locat"))%4;
+				m[0] = n+12;
+				m[1] = n+8;
+				m[2] = n+4;
+				m[3] = n;
 			}
-			else if(item.length == 4) {
-				if(item[0].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", m);
-					if(item[2].getAttribute("data-add") == 2) {
-						item[2].setAttribute("data-locat", m+4);
-						item[3].setAttribute("data-locat", m+4);
-					}
-					else {
-						item[2].setAttribute("data-locat", m+4);
-						item[3].setAttribute("data-locat", m+8);
-					}
-				}
-				else if(item[1].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", m+4);
-					item[2].setAttribute("data-locat", m+4);
-					item[3].setAttribute("data-locat", m+8);
-				}
-				else if(item[2].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", m+4);
-					item[2].setAttribute("data-locat", m+8);
-					item[3].setAttribute("data-locat", m+8);
-				}
-				else {
-					item[1].setAttribute("data-locat", m+4);
-					item[2].setAttribute("data-locat", m+8);
-					item[3].setAttribute("data-locat", m+12);
-				}
-			}
-		}
-	}
-	else if(direct == "right") {
-		for(var i = 0; i < arr.length; i++) {
-			item = arr[i];
-			if(item.length == 0) {
-				continue;
-			}
-			m = Math.ceil(parseInt(item[0].getAttribute("data-locat"))/4);
-			item[item.length-1].setAttribute("data-locat", m*4);
+
+			item[item.length-1].setAttribute("data-locat", m[0]);
 			if(item.length == 2) {
 				if(item[1].getAttribute("data-add") == 1) {
-					item[0].setAttribute("data-locat", m*4);
+					item[0].setAttribute("data-locat", m[0]);
 				}
 				else {
-					item[0].setAttribute("data-locat", m*4-1);
+					item[0].setAttribute("data-locat", m[1]);
 				}
 			}
 			else if(item.length == 3) {
 				if(item[2].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", m*4);
-					item[0].setAttribute("data-locat", m*4-1);
+					item[1].setAttribute("data-locat", m[0]);
+					item[0].setAttribute("data-locat", m[1]);
 				}
 				else if(item[1].getAttribute("data-add") == 1){
-					item[1].setAttribute("data-locat", m*4-1);
-					item[0].setAttribute("data-locat", m*4-1);
+					item[1].setAttribute("data-locat", m[1]);
+					item[0].setAttribute("data-locat", m[1]);
 				}
 				else {
-					item[1].setAttribute("data-locat", m*4-1);
-					item[0].setAttribute("data-locat", m*4-2);
+					item[1].setAttribute("data-locat", m[1]);
+					item[0].setAttribute("data-locat", m[2]);
 				}
 			}
 			else if(item.length == 4) {
 				if(item[3].getAttribute("data-add") == 1) {
-					item[2].setAttribute("data-locat", m*4);
+					item[2].setAttribute("data-locat", m[0]);
 					if(item[1].getAttribute("data-add") == 2) {
-						item[1].setAttribute("data-locat", m*4-1);
-						item[0].setAttribute("data-locat", m*4-1);
+						item[1].setAttribute("data-locat", m[1]);
+						item[0].setAttribute("data-locat", m[1]);
 					}
 					else {
-						item[1].setAttribute("data-locat", m*4-1);
-						item[0].setAttribute("data-locat", m*4-2);
+						item[1].setAttribute("data-locat", m[1]);
+						item[0].setAttribute("data-locat", m[2]);
 					}
 				}
 				else if(item[2].getAttribute("data-add") == 1) {
-					item[2].setAttribute("data-locat", m*4-1);
-					item[1].setAttribute("data-locat", m*4-1);
-					item[0].setAttribute("data-locat", m*4-2);
+					item[2].setAttribute("data-locat", m[1]);
+					item[1].setAttribute("data-locat", m[1]);
+					item[0].setAttribute("data-locat", m[2]);
 				}
 				else if(item[1].getAttribute("data-add") == 1) {
-					item[2].setAttribute("data-locat", m*4-1);
-					item[1].setAttribute("data-locat", m*4-2);
-					item[0].setAttribute("data-locat", m*4-2);
+					item[2].setAttribute("data-locat", m[1]);
+					item[1].setAttribute("data-locat", m[2]);
+					item[0].setAttribute("data-locat", m[2]);
 				}
 				else {
-					item[2].setAttribute("data-locat", m*4-1);
-					item[1].setAttribute("data-locat", m*4-2);
-					item[0].setAttribute("data-locat", m*4-3);
+					item[2].setAttribute("data-locat", m[1]);
+					item[1].setAttribute("data-locat", m[2]);
+					item[0].setAttribute("data-locat", m[3]);
 				}
 			}
 		}
 	}
-	else if(direct == "bottom") {
+}
+
+//判断位置是否相同
+function isSame(direct, arr) {
+	//debugger;
+	var isChange = "nochange";
+	var locat = null;
+	var stt = undefined;
+	var j = 0;
+	if(direct == "left" || direct == "top") {
 		for(var i = 0; i < arr.length; i++) {
-			item = arr[i];
-			if(item.length == 0) {
+			if(arr[i].length == 0) {
 				continue;
 			}
-			m = (parseInt(item[0].getAttribute("data-locat"))%4 == 0)?4:parseInt(item[0].getAttribute("data-locat"))%4;
-			item[item.length-1].setAttribute("data-locat", m+12);
-			if(item.length == 2) {
-				if(item[1].getAttribute("data-add") == 1) {
-					item[0].setAttribute("data-locat", m+12);
+
+			if(direct == "left") {
+				j = i*4+1;
+			}
+			else {
+				j = i+1;
+			}
+			
+			for(var k = 0; k < arr[i].length; k++) {
+				locat = parseInt(arr[i][k].getAttribute("data-locat"));
+				if(locat != j) {
+					isChange = "change";
+					stt = 1;
+					break;
 				}
 				else {
-					item[0].setAttribute("data-locat", m+8);
-				}
-			}
-			else if(item.length == 3) {
-				if(item[2].getAttribute("data-add") == 1) {
-					item[1].setAttribute("data-locat", m+12);
-					item[0].setAttribute("data-locat", m+8);
-				}
-				else if(item[1].getAttribute("data-add") == 1){
-					item[1].setAttribute("data-locat", m+8);
-					item[0].setAttribute("data-locat", m+8);
-				}
-				else {
-					item[1].setAttribute("data-locat", m+8);
-					item[0].setAttribute("data-locat", m+4);
-				}
-			}
-			else if(item.length == 4) {
-				if(item[3].getAttribute("data-add") == 1) {
-					item[2].setAttribute("data-locat", m+12);
-					if(item[1].getAttribute("data-add") == 2) {
-						item[1].setAttribute("data-locat", m+8);
-						item[0].setAttribute("data-locat", m+8);
+					if(direct == "left") {
+						j++;
 					}
 					else {
-						item[1].setAttribute("data-locat", m+8);
-						item[0].setAttribute("data-locat", m+4);
+						j+=4;
 					}
 				}
-				else if(item[2].getAttribute("data-add") == 1) {
-					item[2].setAttribute("data-locat", m+8);
-					item[1].setAttribute("data-locat", m+8);
-					item[0].setAttribute("data-locat", m+4);
-				}
-				else if(item[1].getAttribute("data-add") == 1) {
-					item[2].setAttribute("data-locat", m+8);
-					item[1].setAttribute("data-locat", m+4);
-					item[0].setAttribute("data-locat", m+4);
+			}
+			if(stt) {
+				break;
+			}
+		}
+	}
+	else if(direct == "right" || direct == "bottom") {
+		for(var i = 0; i < arr.length; i++) {
+			if(arr[i].length == 0) {
+				continue;
+			}
+
+			if(direct == "right") {
+				j = i*4+4;
+			}
+			else {
+				j = 13+i;
+			}
+			for(var k = arr[i].length-1; k >= 0; k--) {
+				locat = parseInt(arr[i][k].getAttribute("data-locat"));
+				if(locat != j) {
+					isChange = "change";
+					stt = 1;
+					break;
 				}
 				else {
-					item[2].setAttribute("data-locat", m+8);
-					item[1].setAttribute("data-locat", m+4);
-					item[0].setAttribute("data-locat", m);
+					if(direct == "right") {
+						j--;
+					}
+					else {
+						j-=4;
+					}
 				}
+			}
+			if(stt) {
+				break;
 			}
 		}
 	}
 
-	//开始移动
+	return isChange;
+}
+
+//判断是否移动
+function isMove() {
+	var isAdd = undefined;
+	Elem.forEach(function(item) {
+		var temp = parseInt(item.getAttribute("data-add"));
+		if(temp == 1) {
+			isAdd = 1;
+			return;
+		}
+	});
+
+	if(isAdd == 1) {
+		return "yes";
+	}
+	else {
+		return "no";
+	}
+}
+
+//开始移动
+function beginMove() {
 	for(var i = 0; i < Elem.length; i++) {	
 		Elem[i].className = "move";
 		var l = parseInt(Elem[i].getAttribute("data-locat"));
 		Elem[i].style.top = locatInfo[l-1].top;
 		Elem[i].style.left = locatInfo[l-1].left;
 	}
+}
 
-	setTimeout(function() {
-		//属性值恢复初始状态及碰撞处理
-		for(var i = 0; i < Elem.length; i++) {
-			if(Elem[i].getAttribute("data-status") == "del") {
-				delElem(Elem[i]);
-				Elem.splice(i, 1);
-				i--;
-			}
-			else if(Elem[i].getAttribute("data-status") == "add") {
-				addElem(Elem[i]);
-				Elem[i].setAttribute("data-add", '');
-				Elem[i].setAttribute("data-status", '');
-			}
-		}
-	}, 60);
+//判断是否结束游戏
+function judgeEnd(direct) {
+	//数组排序
+	var arr = sortArr(direct, arr);
 
-	//过100毫秒添加一个新元素并将状态装换回来
-	setTimeout(function() {
-		createNew();
-		status = false;
-	}, 100);
+	//判断位置是否不变
+	var isChange = isSame(direct, arr);
+
+	//判断是否有相加
+	judgeAdd(direct, arr);
+
+	//判断是否移动
+	var isRun = isMove();
+	if(isChange == "nochange" && isRun == "no") {
+		return 1;
+	}
+	else {
+		return 0;
+	}
 }
